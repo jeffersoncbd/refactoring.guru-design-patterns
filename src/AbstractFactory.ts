@@ -1,76 +1,101 @@
-interface Table {
-  type(): string
+interface Item {
+  level(): string
+  processable(item: Item): boolean
 }
 
-interface Chair {
-  type(): string
-  matchWith(table: Table): boolean
-}
+interface Wood extends Item {}
 
-class AntiqueTable implements Table {
-  public type() {
-    return 'antigo'
+interface Stone extends Item {}
+
+class NormalQualityWood implements Item {
+  public level() {
+    return 'Normal'
+  }
+  public processable(item: Item) {
+    return false
   }
 }
 
-class ModernTable implements Table {
-  public type() {
-    return 'moderno'
+class HighQualityWood implements Item {
+  public level() {
+    return 'High'
+  }
+  public processable(item: Item) {
+    return item.level() === this.level()
   }
 }
 
-class AntiqueChair implements Chair {
-  public type() {
-    return 'antigo'
+class NormalQualityStone implements Item {
+  public level() {
+    return 'Normal'
   }
-  public matchWith(furniture: Table) {
-    return furniture.type() === this.type()
+  public processable(item: Item) {
+    return false
   }
 }
 
-class ModernChair implements Chair {
-  public type() {
-    return 'moderno'
+class HighQualityStone implements Item {
+  public level() {
+    return 'High'
   }
-  public matchWith(furniture: Table) {
-    return furniture.type() === this.type()
+  public processable(item: Item) {
+    return item.level() === this.level()
   }
 }
 
 interface AbstractFactory {
-  createTable(): Table
-  createChair(): Chair
+  getWood(): Wood
+  getStone(): Stone
 }
 
-class AntiqueFurnitureFactory implements AbstractFactory {
-  public createTable() {
-    return new AntiqueTable()
+class NormalQualityItems implements AbstractFactory {
+  constructor() {
+    console.log('Game -> Pilha de itens normais criada')
   }
-  public createChair() {
-    return new AntiqueChair()
+  public getWood() {
+    return new NormalQualityWood()
   }
-}
-
-class ModernFurnitureFactory implements AbstractFactory {
-  public createTable() {
-    return new ModernTable()
-  }
-  public createChair() {
-    return new ModernChair()
+  public getStone() {
+    return new NormalQualityStone()
   }
 }
 
- // CLIENT CODE //
+class HighQualityItems implements AbstractFactory {
+  constructor() {
+    console.log('Game -> Pilha de itens de qualidade alta criada')
+  }
+  public getWood() {
+    return new HighQualityWood()
+  }
+  public getStone() {
+    return new HighQualityStone()
+  }
+}
 
-function clientCode(factory: AbstractFactory) {
-  const table = factory.createTable()
-  const chair = factory.createChair()
-  console.log(`Mesa e cadeira do modelo ${chair.type()} foram fabricados`)
-  console.log(`A cadeira ${chair.matchWith(table) ? '' : 'não'} combina com a mesa`)
+// CLIENT CODE //
+
+function makeAxe(wood: Wood, stone: Stone) {
+  return `Game -> Machado ${wood.processable(stone) ? 'foi' : 'não pode ser'} construido`
 }
 
 console.log('')
-clientCode(new AntiqueFurnitureFactory())
+console.log('History -> Após conseguir bastante materiais os jogadores acabaram estragando suas ferramentas')
+const normalQualityStack = new NormalQualityItems()
+const highQualityStack = new HighQualityItems()
+
 console.log('')
-clientCode(new ModernFurnitureFactory())
+console.log('History -> O lenhador pegou uma pedra e um galho qualquer, e tentou fazer um machado')
+const normalQualityWood = normalQualityStack.getWood()
+const normalQualityStone = normalQualityStack.getStone()
+console.log(makeAxe(normalQualityWood, normalQualityStone))
+
+console.log('')
+console.log('History -> O lenhador decidiu tentar novamente com um galho melhor:')
+const highQualityWood = highQualityStack.getWood()
+console.log(makeAxe(highQualityWood, normalQualityStone))
+
+console.log('')
+console.log('History -> O mineiro observando a tentativa, separou uma pedra melhor e entregou para o lenhador')
+const highQualityStone = highQualityStack.getStone()
+console.log(makeAxe(highQualityWood, highQualityStone))
 console.log('')
