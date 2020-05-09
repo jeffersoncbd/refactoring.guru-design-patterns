@@ -6,105 +6,63 @@ interface Builder {
 }
 
 class House {
-  public parts: string[] = []
+  columns = 0
+  walls = 0
+  doors = 0
+  roofs = 0
+
+  finished = false
 }
 
-class HouseBuilder implements Builder {
+export class HouseBuilder implements Builder {
   private product: House
 
-  constructor() {
-    this.reset()
+  private getProgress() {
+    const progressColumns = this.product.columns / 4 * 100
+    const progressWalls = this.product.walls / 4 * 100
+    const progressDoors = this.product.doors / 1 * 100
+    const progressRoofs = this.product.roofs / 1 * 100
+
+    return { progressColumns, progressWalls, progressDoors, progressRoofs }
   }
 
-  public reset() {
+  constructor() {
+    console.log('Game -> Projeto de casa instalado')
     this.product = new House
   }
 
+  public showProgress() {
+    const { progressColumns, progressWalls, progressDoors, progressRoofs } = this.getProgress()
+    console.log(`Game -> Progresso da construção:
+      ${this.product.columns}/4 columns (${progressColumns}%)
+      ${this.product.walls}/4 walls (${progressWalls}%)
+      ${this.product.doors}/1 doors (${progressDoors}%)
+      ${this.product.roofs}/1 roofs (${progressRoofs}%)`)
+  }
+
   public produceColumn() {
-    this.product.parts.push('columns')
-  }
-  public produceDoor() {
-    this.product.parts.push('door')
-  }
-  public produceRoof() {
-    this.product.parts.push('roof')
+    this.product.columns += 1
+    this.checkProgress()
   }
   public produceWall() {
-    this.product.parts.push('walls')
+    this.product.walls += 1
+    this.checkProgress()
+  }
+  public produceDoor() {
+    this.product.doors += 1
+    this.checkProgress()
+  }
+  public produceRoof() {
+    this.product.roofs += 1
+    this.checkProgress()
   }
 
-  public getProduct() {
-    const result = this.product
-    this.reset()
-    console.log(`Construido estrutura com: ${result.parts.join(', ')}`)
-    return result
-  }
-}
-
-class Director {
-  builder: Builder
-
-  setBuilder(builder: Builder) {
-    this.builder = builder
-  }
-
-  buildSmallHouse() {
-    console.log('Construindo casa pequena')
-    this.builder.produceColumn()
-    this.builder.produceColumn()
-    this.builder.produceColumn()
-    this.builder.produceColumn()
-
-    this.builder.produceWall()
-    this.builder.produceWall()
-    this.builder.produceWall()
-    this.builder.produceWall()
-
-    this.builder.produceRoof()
-    this.builder.produceDoor()
-  }
-
-  buildLargeHouse() {
-    console.log('Construindo casa grande')
-    this.builder.produceColumn()
-    this.builder.produceColumn()
-    this.builder.produceColumn()
-    this.builder.produceColumn()
-    this.builder.produceColumn()
-    this.builder.produceColumn()
-
-    this.builder.produceWall()
-    this.builder.produceWall()
-    this.builder.produceWall()
-    this.builder.produceWall()
-    this.builder.produceWall()
-    this.builder.produceWall()
-
-    this.builder.produceRoof()
-    this.builder.produceRoof()
-    this.builder.produceDoor()
+  private checkProgress() {
+    const { progressColumns, progressWalls, progressDoors, progressRoofs } = this.getProgress()
+    const total = progressColumns + progressWalls + progressDoors + progressRoofs
+    if (total >= 400) {
+      console.log('Game -> Casa construida')
+      this.product.finished === true
+    }
   }
 }
-
-// CLIENT CODE //
-
-function clientCode(director: Director) {
-  const builder = new HouseBuilder()
-  director.setBuilder(builder)
-
-  director.buildSmallHouse()
-  builder.getProduct()
-
-  director.buildLargeHouse()
-  builder.getProduct()
-
-  // SEM UM DIRETOR: //
-  builder.produceColumn()
-  builder.produceColumn()
-  builder.produceRoof()
-  builder.produceRoof()
-  builder.getProduct()
-}
-
-const director = new Director()
-clientCode(director)
