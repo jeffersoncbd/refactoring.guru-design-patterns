@@ -1,55 +1,77 @@
-interface Vehicle {
-  carry(): string
+interface Tool {
+  executeFunction(): string
 }
 
-class Car implements Vehicle {
-  public carry() {
-    return 'entrega feita pela estrada'
+class Axe implements Tool {
+  public executeFunction() {
+    return 'Game -> cortando madeira e galhos com machado'
   }
 }
 
-class Boat implements Vehicle {
-  public carry() {
-    return 'entrega feita pelo mar'
+class Seeds implements Tool {
+  public executeFunction() {
+    return 'Game -> plantando sementes de trigo e verduras'
   }
 }
 
-abstract class Transports {
-  public abstract makeVehicle(): Vehicle
-
-  public makeDelivery() {
-    const vehicle = this.makeVehicle()
-    return `Transports -> ${vehicle.carry()}`
+class Pickaxe implements Tool {
+  public executeFunction() {
+    return 'Game -> extraindo pedras e minerais com picareta'
   }
 }
 
-class CarFactory extends Transports {
-  public makeVehicle() {
-    return new Car()
+abstract class Player {
+  protected abstract getTool(): Tool
+
+  constructor(occupation: string) {
+    console.log(`Game -> ${occupation} adicionado ao jogo`)
+  }
+
+  public work() {
+    const tool = this.getTool()
+    return tool.executeFunction()
   }
 }
 
-class BoatFactory extends Transports {
-  public makeVehicle() {
-    return new Boat()
+class LumberjackPlayer extends Player {
+  constructor() {
+    super('Lenhador')
+  }
+  getTool() {
+    return new Axe()
+  }
+}
+
+class FarmerPlayer extends Player {
+  constructor() {
+    super('Fazendeiro')
+  }
+  getTool() {
+    return new Seeds()
+  }
+}
+
+class MinerPlayer extends Player {
+  constructor() {
+    super('Mineiro')
+  }
+  getTool() {
+    return new Pickaxe()
   }
 }
 
 // CLIENT CODE //
 
-function makeDeliveryWith(transport: Transports) {
-  console.log('App -> Iniciando entrega')
-  console.log(transport.makeDelivery())
-}
+console.log('')
+console.log('History -> 3 amigos começaram a jogar cada um em funções diferentes:')
+const miner = new MinerPlayer()
+const farmer = new FarmerPlayer()
+const lumberjack = new LumberjackPlayer()
 
 console.log('')
-console.log('App -> Fabricando um carro')
-const car = new CarFactory()
-makeDeliveryWith(car)
+console.log('History -> Eles então começaram a buscar recursos para sobreviver e construir coisas')
+console.log(miner.work())
+console.log(farmer.work())
+console.log(lumberjack.work())
 
-console.log('')
-
-console.log('App -> Fabricando um barco')
-const boat = new BoatFactory()
-makeDeliveryWith(boat)
-console.log('')
+console.log('') 
