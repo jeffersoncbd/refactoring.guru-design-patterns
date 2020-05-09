@@ -9,9 +9,9 @@ export default () => {
   === Capítulo 02 ===
   `)
 
-  console.log('History -> Após conseguir bastante materiais os jogadores acabaram estragando suas ferramentas')
   const normalQualityStack = new NormalQualityItems()
   const highQualityStack = new HighQualityItems()
+  console.log('History -> Após conseguir bastante materiais os jogadores acabaram estragando suas ferramentas')
   
   console.log('')
   console.log('History -> O lenhador pegou uma pedra e um galho qualquer, e tentou fazer um machado')
